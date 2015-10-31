@@ -1,5 +1,7 @@
 # heartbeat
-a heart coherence tool
+a cardiac coherence tool
+
+http://strafspul.be/lg/heartbeat
 
 
 
