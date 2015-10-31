@@ -1,0 +1,162 @@
+<!doctype html>
+<html manifest="heartbeatmanifest.php">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <link rel="apple-touch-icon-precomposed" href="heartbeat_icon.png" />
+    <link rel="icon" href="heartbeat_favicon.png" type="image/png" />
+    <title>Heartbeat</title>
+  </head>
+  <body>
+    <canvas id="canvas">This page uses a html canvas element. If you see this text your internet browser doesn't support canvas. Please upgrade your browser to the latest version.</canvas>
+    <script>
+    var hrtbt = {};
+    hrtbt.setup = function () {
+      
+      if (!window.innerWidth) {
+        setTimeout(hrtbt.setup, 500);
+        return;
+      }
+      
+      
+      if (!window.requestAnimationFrame) {
+      window.requestAnimationFrame = (window.webkitRequestAnimationFrame ||
+                                      window.mozRequestAnimationFrame ||
+                                      window.msRequestAnimationFrame ||
+                                      window.oRequestAnimationFrame ||
+                                      function (callback) {
+                                        return window.setTimeout(callback, 17);
+                                      });
+      }
+      
+      var start_time = new Date().getTime(), time = getTimer();
+      
+      function getTimer () {
+        return (new Date().getTime() - start_time);
+      }
+      
+      var canvas = document.getElementById('canvas'), context = canvas.getContext('2d');
+      
+      if(!context){
+        return;
+      }
+      
+      var center = {x:0, y:0};
+      var radius = {outer: 100, middle: 50, inner: 20};
+      var red = ((Math.random() * 221) | 0), green = ((Math.random() * 221) | 0), blue = ((Math.random() * 221) | 0);
+      var redUp = (((Math.random() + .5) | 0) ? true : false), greenUp = (((Math.random() + .5) | 0) ? true : false), blueUp = (((Math.random() + .5) | 0) ? true : false);
+      
+      document.body.style.background = "#ffffff";
+      document.body.style.margin = 0; 
+      document.body.style.overflow = "hidden";
+      
+      context.lineWidth = 8;
+            
+      document.body.addEventListener('orientationchange', onO, false);
+      onO();
+      function onO () {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        center.x = canvas.width / 2;
+        center.y = canvas.height / 2;
+        radius.outer = ((canvas.width < canvas.height) ? canvas.width : canvas.height) / 4;
+        radius.inner = radius.outer * .2;        
+      }
+      
+      (function onF (){
+        window.requestAnimationFrame(onF, canvas);
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        
+        time = getTimer();
+        
+        if(time > 10000){
+          start_time = new Date().getTime();
+          time = getTimer();
+        }
+        
+        if(redUp){
+          red += 1;
+          if(red > 221){
+            red = 221;
+            redUp = !redUp;
+          }
+        }else{
+          red -= 1;
+          if(red < 0){
+            red = 0;
+            redUp = !redUp;
+          }
+        }
+        if(greenUp){
+          green += 1;
+          if(green > 221){
+            green = 221;
+            greenUp = !greenUp;
+          }
+        }else{
+          green -= 1;
+          if(green < 0){
+            green = 0;
+            greenUp = !greenUp;
+          }
+        }
+        if(blueUp){
+          blue += 1;
+          if(blue > 221){
+            blue = 221;
+            blueUp = !blueUp;
+          }
+        }else{
+          blue -= 1;
+          if(blue < 0){
+            blue = 0;
+            blueUp = !blueUp;
+          }
+        }        
+        
+        context.beginPath();
+        context.arc(center.x, center.y, radius.outer, 0, Math.PI * 2, true);
+        context.strokeStyle = "rgb(" + red + ","+ green + "," + blue + ")";
+        context.closePath();
+        context.fillStyle = "#ffffff";
+        context.fill();
+        context.stroke();
+        
+        if(time < 4000){
+          radius.middle = ((radius.outer - radius.inner) * (time / 4000)) + radius.inner;
+        }else{
+          radius.middle = ((radius.outer - radius.inner) * (6000 - (time - 4000))/6000) + radius.inner;
+        }
+        context.beginPath();
+        context.arc(center.x, center.y, radius.middle, 0, Math.PI * 2, true);
+        context.closePath();
+        context.strokeStyle = "rgb(" + red + ","+ green + "," + blue + ")";
+        context.fillStyle = "rgb(" + red + ","+ green + "," + blue + ")";
+        context.fill();
+        context.stroke();
+        
+        context.beginPath();
+        context.arc(center.x, center.y, radius.inner, 0, Math.PI * 2, true);
+        context.closePath();
+        context.strokeStyle = "#ffffff";
+        context.fillStyle = "#ffffff";
+        context.fill();
+        context.stroke();
+        
+      }());
+      
+    };
+    
+    if(document.readyState === 'complete'){
+      hrtbt.setup();
+    } else {
+      window.onload = function (){
+        hrtbt.setup();
+      }
+    }
+    </script>
+  </body>
+</html>
