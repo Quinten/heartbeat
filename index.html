@@ -55,7 +55,7 @@
       
       context.lineWidth = 8;
             
-      document.body.addEventListener('orientationchange', onO, false);
+      window.addEventListener('resize', onO, false);
       onO();
       function onO () {
         canvas.width = window.innerWidth;
